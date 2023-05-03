@@ -1,7 +1,7 @@
 from flask import Flask, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from email_validator import validate_email, EmailNotValidError
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse
 from pymongo import MongoClient
 from config import MONGO_URI
 
@@ -24,60 +24,55 @@ class UserLogin(Resource):
 
 class UserRegistration(Resource):
     def post(self):
+        # Validate user data
+        parser = reqparse.RequestParser()
+        parser.add_argument(
+            "email", type=str, help="Email cannot be empty", required=True
+        )
+        parser.add_argument(
+            "first_name", type=str, help="First name cannot be empty", required=True
+        )
+        parser.add_argument(
+            "last_name", type=str, help="Last name cannot be empty", required=True
+        )
+        parser.add_argument(
+            "password", type=str, help="Password cannot be empty", required=True
+        )
+        parser.add_argument(
+            "dob", type=str, help="Date of birth cannot be empty", required=True
+        )
+        parser.add_argument("weight", type=int, required=True)
+        parser.add_argument("height", type=int, required=True)
+        parser.add_argument(
+            "gender",
+            type=str,
+            choices=("male", "female"),
+            required=True,
+        )
+        args = parser.parse_args()
         try:
-            data = request.get_json()
-            email = data["email"]
-            first_name = data["first_name"]
-            last_name = data["last_name"]
-            password = data["password"]
-            dob = data["dob"]
-            height = float(data["height"])
-            weight = float(data["weight"])
-            gender = data["gender"]
-
-            # Validate user data
-            if not email:
-                return {"message": "Email cannot be blank"}, 400
-            email = validate_email(email).email
-            if not password:
-                return {"message": "Password cannot be blank"}, 400
-            if not dob:
-                return {"message": "Date of birth cannot be blank"}, 400
-            if not height:
-                return {"message": "Height cannot be blank"}, 400
-            if not weight:
-                return {"message": "Weight cannot be blank"}, 400
-            if not gender:
-                return {"message": "Gender cannot be blank"}, 400
-            if not first_name or not last_name:
-                return {"message": "Name cannot be blank"}, 400
-            if not gender in ["male", "female"]:
-                return {"message": "Gender has to be either male or female"}, 400
-        except KeyError:
-            return {"message": "Missing required fileds"}, 400
+            args["email"] = validate_email(args["email"]).email
         except EmailNotValidError:
             return {"message": "Invalid email address"}, 400
-        except ValueError:
-            return {"message": "Height and weight should be numbers"}, 400
 
         # Check if user already exist
-        if db.users.find_one({"email": email}):
-            return {"message" : "User already exists"}, 409
+        if db.users.find_one({"email": args["email"]}):
+            return {"message": "User already exists"}, 409
 
-        # Hash password 
-        hashed_password = generate_password_hash(password, method="sha256")
+        # Hash password
+        hashed_password = generate_password_hash(args["password"], method="sha256")
 
         # Insert user into database
         db.users.insert_one(
             {
-                "first_name": first_name,
-                "last_name": last_name,
-                "email": email,
+                "first_name": args["first_name"],
+                "last_name": args["last_name"],
+                "email": args["email"],
                 "password": hashed_password,
-                "dob": dob,
-                "weight": weight,
-                "height": height,
-                "gender": gender,
+                "dob": args["dob"],
+                "weight": args["weight"],
+                "height": args["height"],
+                "gender": args["gender"],
             }
         )
 
