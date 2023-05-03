@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_restful import  Api
+from flask_cors import CORS
 
 from resources.api_status import APIStatus
 from resources.user_login import UserLogin
@@ -9,6 +10,10 @@ from resources.generate_diet_plan import GenerateDietPlan
 from resources.diet_plan import DietPlan
 
 app = Flask(__name__)
+
+# Cors allow all origin (to be changed later)
+CORS(app)
+
 api = Api(app)
 
 api.add_resource(APIStatus, "/api/status")
