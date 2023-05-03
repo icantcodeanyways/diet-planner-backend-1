@@ -19,6 +19,7 @@ class User(Resource):
             "weight": user["weight"],
             "height": user["height"],
             "gender": user["gender"],
+            "required_calories": user["required_calories"],
         }
         return response
 
@@ -47,8 +48,8 @@ class User(Resource):
     # Delete user
     @token_required
     def delete(self, user_id):
-        result = users.delete_one({"_id" : ObjectId(user_id)})
+        result = users.delete_one({"_id": ObjectId(user_id)})
         if result.deleted_count == 1:
-            return {"message" : "User deleted successfully"}, 200
+            return {"message": "User deleted successfully"}, 200
         else:
-            return {"message" : "User not found"}, 404
+            return {"message": "User not found"}, 404
