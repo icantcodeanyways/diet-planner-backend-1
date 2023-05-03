@@ -1,6 +1,5 @@
 from utils.token_required import token_required
 from flask_restful import Resource, reqparse
-from flask import request
 from bson.objectid import ObjectId
 from db import users
 
