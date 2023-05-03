@@ -1,9 +1,12 @@
-from flask import Flask, request
+from flask import Flask, request, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
 from email_validator import validate_email, EmailNotValidError
 from flask_restful import Resource, Api, reqparse
 from pymongo import MongoClient
-from config import MONGO_URI
+from config import MONGO_URI, SECRET_KEY
+import datetime
+import jwt
+from functools import wraps
 
 app = Flask(__name__)
 api = Api(app)
@@ -13,6 +16,29 @@ db = client["dietplannerDB"]
 users = db.users
 
 
+# Decorater function to protect routes
+def token_required(func):
+    @wraps(func)
+    def decorated(*args, **kwargs):
+        token = request.headers.get("Authorization")
+
+        if not token:
+            return {"message": "Token is missing"}, 401
+
+        try:
+            # Verify the token using the secret key
+            data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            user_id = data["user_id"]
+        except:
+            return ({"message": "Token is invalid"}), 401
+
+        # Add the user ID to the request parameters
+        kwargs["user_id"] = user_id
+        return func(*args, **kwargs)
+
+    return decorated
+
+
 class APIStatus(Resource):
     def get(self):
         return {"status": "ok"}
@@ -20,7 +46,25 @@ class APIStatus(Resource):
 
 class UserLogin(Resource):
     def post(self):
-        return {"message": "user login post"}
+        parser = reqparse.RequestParser()
+        parser.add_argument("email", type=str, required=True)
+        parser.add_argument("password", type=str, required=True)
+        args = parser.parse_args()
+
+        # Check if user exists and passwords match
+        user = users.find_one({"email": args["email"]})
+
+        if not user or not check_password_hash(user["password"], args["password"]):
+            return {"error": "Invalid username or password"}, 401
+
+        token = jwt.encode(
+            {
+                "user_id": str(user["_id"]),
+                "exp": str(datetime.datetime.utcnow() + datetime.timedelta(minutes=60)),
+            },
+            SECRET_KEY,
+        )
+        return {"token": token}, 200
 
 
 class UserRegistration(Resource):
