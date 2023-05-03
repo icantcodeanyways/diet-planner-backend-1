@@ -10,6 +10,7 @@ api = Api(app)
 app.config["MONGO_URI"] = MONGO_URI
 client = MongoClient(MONGO_URI)
 db = client["dietplannerDB"]
+users = db.users
 
 
 class APIStatus(Resource):
@@ -56,14 +57,14 @@ class UserRegistration(Resource):
             return {"message": "Invalid email address"}, 400
 
         # Check if user already exist
-        if db.users.find_one({"email": args["email"]}):
+        if users.find_one({"email": args["email"]}):
             return {"message": "User already exists"}, 409
 
         # Hash password
         hashed_password = generate_password_hash(args["password"], method="sha256")
 
         # Insert user into database
-        db.users.insert_one(
+        users.insert_one(
             {
                 "first_name": args["first_name"],
                 "last_name": args["last_name"],
