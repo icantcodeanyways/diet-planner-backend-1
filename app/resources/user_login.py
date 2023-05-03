@@ -22,8 +22,8 @@ class UserLogin(Resource):
         token = jwt.encode(
             {
                 "user_id": str(user["_id"]),
-                "exp": str(datetime.datetime.utcnow() + datetime.timedelta(minutes=60)),
             },
             SECRET_KEY,
+            algorithm="HS256",
         )
         return {"token": token}, 200
