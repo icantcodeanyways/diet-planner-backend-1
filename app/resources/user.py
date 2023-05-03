@@ -10,6 +10,8 @@ class User(Resource):
     def get(self, user_id):
         # Find the user
         user = users.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            return {"message": "User not found"}, 404
         response = {
             "first_name": user["first_name"],
             "last_name": user["last_name"],
