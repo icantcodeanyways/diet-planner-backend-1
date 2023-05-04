@@ -3,6 +3,7 @@ import jwt
 from flask import request  
 from functools import wraps
 from config import SECRET_KEY
+import time
 
 # Decorater function to protect routes
 def token_required(func):
@@ -17,6 +18,10 @@ def token_required(func):
             # Verify the token using the secret key
             data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
             user_id = data["user_id"]
+
+            # Check if token has expired or not
+            if data["exp"] < time.time():
+                return {"message" : "Token has expired."}, 401
         except:
             return ({"message": "Token is invalid"}), 401
 
