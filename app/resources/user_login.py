@@ -20,7 +20,7 @@ class UserLogin(Resource):
             return {"message": "Invalid username or password"}, 401
         
         # Expiration time for the token
-        expires_at = datetime.datetime.utcnow() + datetime.timedelta(day=1)
+        expires_at = datetime.datetime.utcnow() + datetime.timedelta(days=1)
 
         token = jwt.encode(
             {
