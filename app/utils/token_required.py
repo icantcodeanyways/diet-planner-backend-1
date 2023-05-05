@@ -12,7 +12,7 @@ def token_required(func):
         token = request.headers.get("Authorization")
 
         if not token:
-            return {"message": "Token is missing"}, 401
+            return {"message": "Please login to view the page"}, 401
 
         try:
             # Verify the token using the secret key
@@ -21,9 +21,9 @@ def token_required(func):
 
             # Check if token has expired or not
             if data["exp"] < time.time():
-                return {"message" : "Token has expired."}, 401
+                return {"message" : "Session expired. Please login again."}, 401
         except:
-            return ({"message": "Token is invalid"}), 401
+            return ({"message": "Invalid token. Please login again."}), 401
 
         # Add the user ID to the request parameters
         kwargs["user_id"] = user_id

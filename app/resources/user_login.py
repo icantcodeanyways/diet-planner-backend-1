@@ -17,7 +17,7 @@ class UserLogin(Resource):
         user = users.find_one({"email": args["email"]})
 
         if not user or not check_password_hash(user["password"], args["password"]):
-            return {"error": "Invalid username or password"}, 401
+            return {"message": "Invalid username or password"}, 401
         
         # Expiration time for the token
         expires_at = datetime.datetime.utcnow() + datetime.timedelta(day=1)
