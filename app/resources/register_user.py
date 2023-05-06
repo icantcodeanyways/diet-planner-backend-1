@@ -81,7 +81,7 @@ class UserRegistration(Resource):
                 "gender": args["gender"],
                 "activity_factor": args["activity_factor"],
                 "required_calories": required_calories,
-                "generated_diet_plans" : []
+                "generated_diet_plans": [],
             }
         )
 

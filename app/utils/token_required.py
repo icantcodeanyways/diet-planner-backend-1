@@ -1,9 +1,10 @@
 import datetime
 import jwt
-from flask import request  
+from flask import request
 from functools import wraps
 from config import SECRET_KEY
 import time
+
 
 # Decorater function to protect routes
 def token_required(func):
@@ -21,7 +22,7 @@ def token_required(func):
 
             # Check if token has expired or not
             if data["exp"] < time.time():
-                return {"message" : "Session expired. Please login again."}, 401
+                return {"message": "Session expired. Please login again."}, 401
         except:
             return ({"message": "Invalid token. Please login again."}), 401
 

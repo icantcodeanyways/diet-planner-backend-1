@@ -36,7 +36,11 @@ class ForgotPassword(Resource):
             message = Message(
                 "Diet planner app password reset code", recipients=[args["email"]]
             )
-            message.body = "Your password reset code for diet planner application is: {}".format(code)
+            message.body = (
+                "Your password reset code for diet planner application is: {}".format(
+                    code
+                )
+            )
             try:
                 self.mail.send(message)
                 return {"message": "Password reset code send successfully"}, 200

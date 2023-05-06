@@ -18,15 +18,12 @@ class UserLogin(Resource):
 
         if not user or not check_password_hash(user["password"], args["password"]):
             return {"message": "Invalid username or password"}, 401
-        
+
         # Expiration time for the token
         expires_at = datetime.datetime.utcnow() + datetime.timedelta(days=1)
 
         token = jwt.encode(
-            {
-                "user_id": str(user["_id"]),
-                "exp" : expires_at
-            },
+            {"user_id": str(user["_id"]), "exp": expires_at},
             SECRET_KEY,
             algorithm="HS256",
         )
