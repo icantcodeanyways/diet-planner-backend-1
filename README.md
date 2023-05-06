@@ -17,3 +17,7 @@
 `GET /api/users/{user_id}/diet_plans` - Returns the generated diet plans of the user  (protected)
 
 `POST /api/users/{user_id}/generate_diet_plan` - Generates a diet plan for the user (protected)
+
+`POST /api/users/forgot_password` - To reset the password, sends a mail to the user with a 6 digit reset code
+
+`POST /api/users/reset_password` - Resets the password requires valid email, reset code and new password
