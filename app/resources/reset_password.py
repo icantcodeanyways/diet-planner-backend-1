@@ -33,6 +33,8 @@ class ResetPassword(Resource):
 
         hashed_password = generate_password_hash(args["password"], method="sha256")
         users.update_one(
-            {"email": user["email"]}, {"$set": {"password": hashed_password}}
+            {"email": user["email"]},
+            {"$set": {"password": hashed_password}},
+            {"$unset": {"password_reset": ""}},
         )
         return {"message": "Password updated successfully"}, 200
