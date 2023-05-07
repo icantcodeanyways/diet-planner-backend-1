@@ -20,17 +20,6 @@ class ForgotPassword(Resource):
             return {"message": "No user exist with that email"}, 404
 
         code = str(random.randint(100000, 999999))
-        users.update_one(
-            {"_id": user["_id"]},
-            {
-                "$set": {
-                    "password_reset": {
-                        "reset_code": code,
-                        "reset_time": datetime.datetime.utcnow(),
-                    }
-                }
-            },
-        )
 
         with self.app.app_context():
             message = Message(
@@ -43,6 +32,17 @@ class ForgotPassword(Resource):
             )
             try:
                 self.mail.send(message)
+                users.update_one(
+                    {"_id": user["_id"]},
+                    {
+                        "$set": {
+                            "password_reset": {
+                                "reset_code": code,
+                                "reset_time": datetime.datetime.utcnow(),
+                            }
+                        }
+                    },
+                )
                 return {"message": "Password reset code send successfully"}, 200
             except Exception as e:
                 print(e)
