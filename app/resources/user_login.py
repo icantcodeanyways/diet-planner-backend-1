@@ -9,8 +9,12 @@ from config import SECRET_KEY
 class UserLogin(Resource):
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument("email", type=str, required=True)
-        parser.add_argument("password", type=str, required=True)
+        parser.add_argument(
+            "email", type=str, help="Email cannot be empty", required=True
+        )
+        parser.add_argument(
+            "password", type=str, help="Password cannot be empty", required=True
+        )
         args = parser.parse_args()
 
         # Check if user exists and passwords match
