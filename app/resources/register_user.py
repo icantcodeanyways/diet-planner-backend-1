@@ -34,7 +34,10 @@ class UserRegistration(Resource):
             required=True,
         )
         parser.add_argument(
-            "activity_factor", type=float, choices=(1, 1.2, 1.4, 1.6, 1.8), required=True
+            "activity_factor",
+            type=float,
+            choices=(1, 1.2, 1.4, 1.6, 1.8),
+            required=True,
         )
         parser.add_argument(
             "diet_goal", type=str, choices=("gain", "lose", "maintain"), required=True
@@ -114,11 +117,11 @@ class UserRegistration(Resource):
                 "height": args["height"],
                 "gender": args["gender"],
                 "activity_factor": args["activity_factor"],
-                "diet_goal" : args["diet_goal"],
+                "diet_goal": args["diet_goal"],
                 "required_calories": required_calories,
                 "required_carbs": required_carbs,
                 "required_protien": required_protien,
-                "required_fat" : required_fat,
+                "required_fat": required_fat,
                 "generated_diet_plans": [],
             }
         )
