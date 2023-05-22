@@ -36,6 +36,9 @@ class UserRegistration(Resource):
         parser.add_argument(
             "activity_factor", type=int, choices=(1, 1.2, 1.4, 1.6, 1.8), required=True
         )
+        parser.add_argument(
+            "diet_goal", type=str, choices=("gain", "looe", "maintain"), required=True
+        )
         args = parser.parse_args()
         try:
             args["email"] = validate_email(args["email"]).email
@@ -68,6 +71,37 @@ class UserRegistration(Resource):
                 * args["activity_factor"]
             )
 
+        # Calculate required carbs
+        required_carbs = 0
+        if args["diet_goal"] == "gain":
+            required_carbs = 0.65 * required_calories
+        elif args["diet_goal"] == "maintain":
+            required_carbs = 0.50 * required_calories
+        elif args["diet_goal"] == "maintain":
+            required_carbs = 0.45 * required_calories
+
+        required_carbs = required_carbs / 4
+
+        # Calculate required protien
+        required_protien = 0
+        if args["diet_goal"] == "gain":
+            required_protien = 2 * args["weight"]
+        elif args["diet_goal"] == "maintain":
+            required_protien = 1.3 * args["weight"]
+        elif args["diet_goal"] == "maintain":
+            required_protien = 1.6 * args["weight"]
+
+        # Calculate required fat
+        required_fat = 0
+        if args["diet_goal"] == "gain":
+            required_fat = 0.35 * required_calories
+        elif args["diet_goal"] == "maintain":
+            required_fat = 0.25 * required_calories
+        elif args["diet_goal"] == "maintain":
+            required_fat = 0.20 * required_calories
+
+        required_fat = required_fat / 4
+
         # Insert user into database
         users.insert_one(
             {
@@ -80,7 +114,11 @@ class UserRegistration(Resource):
                 "height": args["height"],
                 "gender": args["gender"],
                 "activity_factor": args["activity_factor"],
+                "diet_goal" : args["diet_goal"],
                 "required_calories": required_calories,
+                "required_carbs": required_carbs,
+                "required_protien": required_protien,
+                "required_fat" : required_fat,
                 "generated_diet_plans": [],
             }
         )
