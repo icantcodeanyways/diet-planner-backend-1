@@ -37,7 +37,7 @@ class UserRegistration(Resource):
             "activity_factor", type=int, choices=(1, 1.2, 1.4, 1.6, 1.8), required=True
         )
         parser.add_argument(
-            "diet_goal", type=str, choices=("gain", "looe", "maintain"), required=True
+            "diet_goal", type=str, choices=("gain", "lose", "maintain"), required=True
         )
         args = parser.parse_args()
         try:
