@@ -1,6 +1,7 @@
 from utils.token_required import token_required
 from flask_restful import Resource, reqparse
 from bson.objectid import ObjectId
+from datetime import datetime
 from db import users
 
 
@@ -12,26 +13,50 @@ class User(Resource):
         user = users.find_one({"_id": ObjectId(user_id)})
         if not user:
             return {"message": "User not found"}, 404
-        if len(user["generated_diet_plans"]) == 0:
-            consumed_calories = 0
-            consumed_fat = 0
-            consumed_protien = 0
-            consumed_carbs = 0
-            breakfast = {
-                "consumed_carbs": 0,
-                "consumed_fat": 0,
-                "consumed_protien": 0,
-            }
-            dinner = {
-                "consumed_carbs": 0,
-                "consumed_fat": 0,
-                "consumed_protien": 0,
-            }
-            lunch = {
-                "consumed_carbs": 0,
-                "consumed_fat": 0,
-                "consumed_protien": 0,
-            }
+        consumed_calories = 0
+        consumed_fat = 0
+        consumed_protien = 0
+        consumed_carbs = 0
+        breakfast = {
+            "consumed_carbs": 0,
+            "consumed_fat": 0,
+            "consumed_protien": 0,
+        }
+        dinner = {
+            "consumed_carbs": 0,
+            "consumed_fat": 0,
+            "consumed_protien": 0,
+        }
+        lunch = {
+            "consumed_carbs": 0,
+            "consumed_fat": 0,
+            "consumed_protien": 0,
+        }
+
+        if len(user["generated_diet_plans"]) != 0:
+            today = datetime.now().strftime("%d/%m/%Y")
+            for diet_plans in user["generated_diet_plans"]:
+                if today in diet_plans:
+                    todays_plans = diet_plans[str(today)]
+
+            for plan in todays_plans:
+                consumed_calories += plan["total_calories"]
+                consumed_fat += plan["total_fat"]
+                consumed_protien += plan["total_protien"]
+                consumed_carbs += plan["total_carbs"]
+
+                if plan["meal_timing"] == "breakfast":
+                    breakfast["consumed_fat"] = plan["total_fat"]
+                    breakfast["consumed_protien"] = plan["total_protien"]
+                    breakfast["consumed_protien"] = plan["total_protien"]
+                elif plan["meal_timing"] == "lunch":
+                    lunch["consumed_fat"] = plan["total_fat"]
+                    lunch["consumed_protien"] = plan["total_protien"]
+                    lunch["consumed_protien"] = plan["total_protien"]
+                elif plan["meal_timing"] == "dinner":
+                    dinner["consumed_fat"] = plan["total_fat"]
+                    dinner["consumed_protien"] = plan["total_protien"]
+                    dinner["consumed_protien"] = plan["total_protien"]
 
         response = {
             "first_name": user["first_name"],
