@@ -31,17 +31,19 @@ class DietPlan(Resource):
 
         today = datetime.now().strftime("%d/%m/%Y")
 
+        todays_diet_plans = None
         if len(user["generated_diet_plans"]) != 0:
             for diet_plans in user["generated_diet_plans"]:
                 if today in diet_plans:
                     todays_diet_plans = diet_plans[str(today)]
 
-            if len(todays_diet_plans) == 3:
-                return {"message": "Diet plans already exist"}, 409
+            if todays_diet_plans:
+                if len(todays_diet_plans) == 3:
+                    return {"message": "Diet plans already exist"}, 409
 
-            for diet_plan in todays_diet_plans:
-                if diet_plan["meal_timing"] == meal_timing:
-                    return {"message": "Diet plan already exist"}, 409
+                for diet_plan in todays_diet_plans:
+                    if diet_plan["meal_timing"] == meal_timing:
+                        return {"message": "Diet plan already exist"}, 409
 
         total_calories = 0
         total_carbs = 0
@@ -59,11 +61,21 @@ class DietPlan(Resource):
         diet_plan["total_protien"] = total_protien
         diet_plan["total_carbs"] = total_carbs
 
-        print(diet_plan)
+        if todays_diet_plans:
+            query = {
+                "_id": ObjectId(user_id),
+                "generated_diet_plans": {"$elemMatch": {today: {"$exists": True}}},
+            }
+            document = users.find_one(query)
+            users.update_one(
+                query,
+                {"$push": {f"generated_diet_plans.$.{today}": diet_plan}},
+            )
 
-        users.update_one(
-            {"_id": ObjectId(user_id)},
-            {"$push": {"generated_diet_plans": {today: [diet_plan]}}},
-        )
+        else:
+            users.update_one(
+                {"_id": ObjectId(user_id)},
+                {"$push": {"generated_diet_plans": {today: [diet_plan]}}},
+            )
 
         return {"message": "okda"}, 200
