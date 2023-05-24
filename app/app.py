@@ -10,6 +10,7 @@ from resources.generate_diet_plan import GenerateDietPlan
 from resources.diet_plan import DietPlan
 from resources.forgot_password import ForgotPassword
 from resources.reset_password import ResetPassword
+from resources.custom_food_log import CustomFoodLog
 
 app = Flask(__name__)
 
@@ -36,6 +37,7 @@ api.add_resource(
     ForgotPassword, "/api/users/forgot_password", resource_class_kwargs={"app": app}
 )
 api.add_resource(ResetPassword, "/api/users/reset_password")
+api.add_resource(CustomFoodLog, "/api/users/<string:user_id>/custom_food_log")
 
 # Run the server
 if __name__ == "__main__":
