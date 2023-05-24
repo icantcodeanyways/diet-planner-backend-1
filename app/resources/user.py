@@ -48,15 +48,15 @@ class User(Resource):
                 if plan["meal_timing"] == "breakfast":
                     breakfast["consumed_fat"] = plan["total_fat"]
                     breakfast["consumed_protien"] = plan["total_protien"]
-                    breakfast["consumed_protien"] = plan["total_protien"]
+                    breakfast["consumed_carbs"] = plan["total_carbs"]
                 elif plan["meal_timing"] == "lunch":
                     lunch["consumed_fat"] = plan["total_fat"]
                     lunch["consumed_protien"] = plan["total_protien"]
-                    lunch["consumed_protien"] = plan["total_protien"]
+                    lunch["consumed_carbs"] = plan["total_carbs"]
                 elif plan["meal_timing"] == "dinner":
                     dinner["consumed_fat"] = plan["total_fat"]
                     dinner["consumed_protien"] = plan["total_protien"]
-                    dinner["consumed_protien"] = plan["total_protien"]
+                    dinner["consumed_carbs"] = plan["total_carbs"]
 
         response = {
             "first_name": user["first_name"],
