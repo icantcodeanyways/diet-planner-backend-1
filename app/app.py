@@ -23,9 +23,9 @@ api = Api(app)
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 465
 app.config["MAIL_USE_SSL"] = True
-app.config["MAIL_USERNAME"] = "dietplannerapplication@gmail.com"
-app.config["MAIL_PASSWORD"] = "qxpxewnbvvnwlzqz"
-app.config["MAIL_DEFAULT_SENDER"] = "dietplannerapplication@gmail.com"
+app.config["MAIL_USERNAME"] = "charname40@gmail.com"
+app.config["MAIL_PASSWORD"] = "etiojkfcdctjazrd"
+app.config["MAIL_DEFAULT_SENDER"] = "charname40@gmail.com"
 
 api.add_resource(APIStatus, "/api/status")
 api.add_resource(User, "/api/users/<string:user_id>")
