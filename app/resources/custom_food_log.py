@@ -25,8 +25,20 @@ class CustomFoodLog(Resource):
             parser.add_argument("log_info", type=list, required=True, location="json")
             args = parser.parse_args()
             selected_meals = args["log_info"]
+
             if len(selected_meals) == 0:
                 return {"message": "Meals cannot be null"}, 400
+
+            for meal in selected_meals:
+                try:
+                    if not meal["food"] or not meal["quantity"]:
+                        return {
+                            "message": "Invalid request. Please provided proper data"
+                        }, 400
+                except TypeError:
+                    return {
+                        "message": "Invalid request. Please provided proper data"
+                    }, 400
 
             user = users.find_one({"_id": ObjectId(user_id)})
             if not user:
@@ -57,7 +69,7 @@ class CustomFoodLog(Resource):
                     )
                 except KeyError:
                     return {
-                        "message : Diet plan cannot be generated with the given food items. Please choose some other food items."
+                        "message : Unable to log diet plan due to missing data."
                     }, 400
                 try:
                     meal_info["protien"] = (
@@ -92,7 +104,6 @@ class CustomFoodLog(Resource):
                 """ print(selected_meals[i]) """
                 meal_info["quantity"] = float(selected_meals[i]["quantity"])
                 meal_list.append(meal_info)
-            print("fuck here")
             print(meal_list)
 
             meal_timing = args["meal_timing"]
@@ -106,10 +117,13 @@ class CustomFoodLog(Resource):
 
                 if todays_diet_plans:
                     if len(todays_diet_plans) == 3:
+                        print("here")
                         return {"message": "Diet plans already exist"}, 409
 
                     for diet_plan in todays_diet_plans:
                         if diet_plan["meal_timing"] == meal_timing:
+                            print("yeah here")
+                            print(diet_plan["meal_timing"], meal_timing)
                             return {"message": "Diet plan already exist"}, 409
 
             total_calories = 0
@@ -150,8 +164,8 @@ class CustomFoodLog(Resource):
                     {"$push": {"generated_diet_plans": {today: [diet_plan]}}},
                 )
 
-            return {"message": "okda"}, 200
+            return {"message": "Custom diet plan added successfully"}, 200
 
         except KeyError as error:
-            print(f"Something fucked up here {error}")
+            print(f"Something messed up here {error}")
             return {"message": "Invalid request"}, 400
