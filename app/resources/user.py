@@ -35,28 +35,30 @@ class User(Resource):
 
         if len(user["generated_diet_plans"]) != 0:
             today = datetime.now().strftime("%d/%m/%Y")
+            todays_plans = None
             for diet_plans in user["generated_diet_plans"]:
                 if today in diet_plans:
                     todays_plans = diet_plans[str(today)]
 
-            for plan in todays_plans:
-                consumed_calories += plan["total_calories"]
-                consumed_fat += plan["total_fat"]
-                consumed_protien += plan["total_protien"]
-                consumed_carbs += plan["total_carbs"]
+            if todays_plans:
+                for plan in todays_plans:
+                    consumed_calories += plan["total_calories"]
+                    consumed_fat += plan["total_fat"]
+                    consumed_protien += plan["total_protien"]
+                    consumed_carbs += plan["total_carbs"]
 
-                if plan["meal_timing"] == "breakfast":
-                    breakfast["consumed_fat"] = plan["total_fat"]
-                    breakfast["consumed_protien"] = plan["total_protien"]
-                    breakfast["consumed_carbs"] = plan["total_carbs"]
-                elif plan["meal_timing"] == "lunch":
-                    lunch["consumed_fat"] = plan["total_fat"]
-                    lunch["consumed_protien"] = plan["total_protien"]
-                    lunch["consumed_carbs"] = plan["total_carbs"]
-                elif plan["meal_timing"] == "dinner":
-                    dinner["consumed_fat"] = plan["total_fat"]
-                    dinner["consumed_protien"] = plan["total_protien"]
-                    dinner["consumed_carbs"] = plan["total_carbs"]
+                    if plan["meal_timing"] == "breakfast":
+                        breakfast["consumed_fat"] = plan["total_fat"]
+                        breakfast["consumed_protien"] = plan["total_protien"]
+                        breakfast["consumed_carbs"] = plan["total_carbs"]
+                    elif plan["meal_timing"] == "lunch":
+                        lunch["consumed_fat"] = plan["total_fat"]
+                        lunch["consumed_protien"] = plan["total_protien"]
+                        lunch["consumed_carbs"] = plan["total_carbs"]
+                    elif plan["meal_timing"] == "dinner":
+                        dinner["consumed_fat"] = plan["total_fat"]
+                        dinner["consumed_protien"] = plan["total_protien"]
+                        dinner["consumed_carbs"] = plan["total_carbs"]
 
         response = {
             "first_name": user["first_name"],
