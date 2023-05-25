@@ -1,4 +1,5 @@
 from sys import exception
+from pulp import LpMinimize, LpProblem, LpVariable, LpMaximize, lpSum, LpStatus
 from utils.token_required import token_required
 from flask_restful import Resource, request
 import requests
@@ -77,16 +78,81 @@ class GenerateDietPlan(Resource):
                 try:
                     meal_info["image"] = response["parsed"][0]["food"]["image"]
                 except KeyError as error:
-                    meal_info[
-                        "image"
-                    ] = "https://i.imgur.com/MEupGps.png"
+                    meal_info["image"] = "https://i.imgur.com/MEupGps.png"
 
                 meal_list.append(meal_info)
 
-            # This is where we would be solving the lp
+
             diet_plan = []
-            current_calorie = 0
-            required_calories = user["required_calories"]
+            food_vars = [meal["meal_item"] for meal in meal_list]
+            food_calories = [meal["calories"] for meal in meal_list]
+            food_protein = [meal["protien"] for meal in meal_list]
+            food_fat = [meal["fat"] for meal in meal_list]
+            food_carbs = [meal["carbs"] for meal in meal_list]
+
+            # Please work, please
+            prob = LpProblem("Maximize_Calories", LpMaximize)
+            food_amounts = LpVariable.dicts(
+                "Food_Amount", food_vars, lowBound=0, cat="Continuous"
+            )
+
+            prob += lpSum(
+                [
+                    food_amounts[food_vars[i]] * food_calories[i]
+                    for i in range(len(food_vars))
+                ]
+            )
+            print(prob)
+
+            prob += lpSum(
+                [
+                    food_amounts[food_vars[i]] * food_protein[i]
+                    for i in range(len(food_vars))
+                ]
+            ) <= (user["required_protien"] / 3)
+
+            prob += lpSum(
+                [
+                    food_amounts[food_vars[i]] * food_protein[i]
+                    for i in range(len(food_vars))
+                ]
+            ) >= ((user["required_protien"] / 3 ) - 50)
+            prob += lpSum(
+                [
+                    food_amounts[food_vars[i]] * food_fat[i]
+                    for i in range(len(food_vars))
+                ]
+            ) <= (user["required_fat"] / 3)
+            prob += lpSum(
+                [
+                    food_amounts[food_vars[i]] * food_fat[i]
+                    for i in range(len(food_vars))
+                ]
+            ) >= ((user["required_fat"] / 3) - 50)
+            prob += lpSum(
+                [
+                    food_amounts[food_vars[i]] * food_carbs[i]
+                    for i in range(len(food_vars))
+                ]
+            ) <= (user["required_carbs"] / 3)
+            prob += lpSum(
+                [
+                    food_amounts[food_vars[i]] * food_carbs[i]
+                    for i in range(len(food_vars))
+                ]
+            ) >= ((user["required_carbs"] / 3) - 100)
+
+            prob.solve()
+            """ print(food_amounts) """
+            """ print("Status:", LpStatus[prob.status]) """
+            """ print(type(food_amounts)) """
+
+            for food in food_vars:
+                amount = food_amounts[food].varValue
+                print(food, amount)
+
+            # I hope that has worked..
+
             for meal in meal_list:
                 diet = {}
                 diet["calories"] = meal["calories"]
@@ -94,7 +160,7 @@ class GenerateDietPlan(Resource):
                 diet["protien"] = meal["protien"]
                 diet["fat"] = meal["fat"]
                 diet["carbs"] = meal["carbs"]
-                diet["quantity"] = 100
+                diet["quantity"] = food_amounts[meal["meal_item"]].varValue
                 diet["image"] = meal["image"]
                 diet_plan.append(diet)
 
