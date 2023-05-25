@@ -44,7 +44,7 @@ class DietPlan(Resource):
 
         diet_plan = request.get_json()
         meals = request.get_json()["diet_plan"]
-        meal_timing = request.get_json()["diet_timing"]
+        meal_timing = request.get_json()["meal_timing"]
 
         today = datetime.now().strftime("%d/%m/%Y")
 
