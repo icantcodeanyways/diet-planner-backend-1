@@ -55,11 +55,26 @@ class CustomFoodLog(Resource):
                     },
                 ).json()
 
-                if len(response["parsed"]) == 0:
-                    if len(response["hints"]) != 0:
+                if (
+                    len(response["parsed"]) == 0
+                    or selected_meals[i].strip().lower()
+                    != response["parsed"][0]["food"]["label"].strip().lower()
+                ):
+                    hints = response["hints"]
+                    if len(hints) == 0:
+                        return {
+                            "message": "Diet plan cannot be generated due to missing meal info"
+                        }, 400
+                    for hint in hints:
+                        if (
+                            hint["food"]["label"].strip().lower()
+                            == selected_meals[i].strip().lower()
+                        ):
+                            response["parsed"] = [hint]
+                            break
+                    if len(response["parsed"]) == 0:
                         response["parsed"] = response["hints"]
-                    else:
-                        break
+
                 meal_info = {}
                 meal_info["item"] = selected_meals[i]["food"]
                 try:
