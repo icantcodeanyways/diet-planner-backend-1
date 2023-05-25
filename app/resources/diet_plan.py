@@ -17,6 +17,23 @@ class DietPlan(Resource):
         generated_diet_plans = user["generated_diet_plans"]
         if len(generated_diet_plans) == 0:
             return {"message": "You have no generated meal plans"}, 404
+        if "q" in request.args:
+            date = request.args["q"]
+            try:
+                datetime.strptime(date, "%d/%m/%Y").date()
+            except ValueError:
+                return {"message": "Invalid date format"}, 400
+            query = {
+                "_id": ObjectId(user_id),
+                "generated_diet_plans": {"$elemMatch": {date: {"$exists": True}}},
+            }
+            projection = {"generated_diet_plans.$": 1}
+
+            result = users.find_one(query, projection)
+            if not result:
+                return {"message": "No diet plans exist for the given date"}, 404
+            return result["generated_diet_plans"][0][date]
+
         return generated_diet_plans, 200
 
     @token_required
