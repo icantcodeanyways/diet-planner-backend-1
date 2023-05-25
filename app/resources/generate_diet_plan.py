@@ -36,11 +36,27 @@ class GenerateDietPlan(Resource):
                         "ingr": selected_meals[i],
                     },
                 ).json()
-                if len(response["parsed"]) == 0:
-                    if len(response["hints"]) != 0:
+
+                if (
+                    len(response["parsed"]) == 0
+                    or selected_meals[i].strip().lower()
+                    != response["parsed"][0]["food"]["label"].strip().lower()
+                ):
+                    hints = response["hints"]
+                    if len(hints) == 0:
+                        return {
+                            "message": "Diet plan cannot be generated due to missing meal info"
+                        }, 400
+                    for hint in hints:
+                        if (
+                            hint["food"]["label"].strip().lower()
+                            == selected_meals[i].strip().lower()
+                        ):
+                            response["parsed"] = [hint]
+                            break
+                    if len(response["parsed"]) == 0:
                         response["parsed"] = response["hints"]
-                    else:
-                        break
+
                 meal_info = {}
                 meal_info["meal_item"] = selected_meals[i]
                 try:
@@ -82,7 +98,6 @@ class GenerateDietPlan(Resource):
 
                 meal_list.append(meal_info)
 
-
             diet_plan = []
             food_vars = [meal["meal_item"] for meal in meal_list]
             food_calories = [meal["calories"] for meal in meal_list]
@@ -116,7 +131,7 @@ class GenerateDietPlan(Resource):
                     food_amounts[food_vars[i]] * food_protein[i]
                     for i in range(len(food_vars))
                 ]
-            ) >= ((user["required_protien"] / 3 ) - 50)
+            ) >= ((user["required_protien"] / 3) - 50)
             prob += lpSum(
                 [
                     food_amounts[food_vars[i]] * food_fat[i]
@@ -140,7 +155,7 @@ class GenerateDietPlan(Resource):
                     food_amounts[food_vars[i]] * food_carbs[i]
                     for i in range(len(food_vars))
                 ]
-            ) >= ((user["required_carbs"] / 3) - 100)
+            ) >= ((user["required_carbs"] / 3) - 50)
 
             prob.solve()
             """ print(food_amounts) """
