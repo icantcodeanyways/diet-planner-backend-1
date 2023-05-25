@@ -79,7 +79,7 @@ class GenerateDietPlan(Resource):
                 except KeyError as error:
                     meal_info[
                         "image"
-                    ] = "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg"
+                    ] = "https://i.imgur.com/MEupGps.png"
 
                 meal_list.append(meal_info)
 

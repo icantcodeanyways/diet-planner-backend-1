@@ -97,9 +97,7 @@ class CustomFoodLog(Resource):
                 try:
                     meal_info["image"] = response["parsed"][0]["food"]["image"]
                 except KeyError as error:
-                    meal_info[
-                        "image"
-                    ] = "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg"
+                    meal_info["image"] = "https://i.imgur.com/MEupGps.png"
 
                 """ print(selected_meals[i]) """
                 meal_info["quantity"] = float(selected_meals[i]["quantity"])
