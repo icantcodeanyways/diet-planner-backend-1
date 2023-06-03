@@ -80,7 +80,7 @@ class UserRegistration(Resource):
             required_carbs = 0.65 * required_calories
         elif args["diet_goal"] == "maintain":
             required_carbs = 0.50 * required_calories
-        elif args["diet_goal"] == "maintain":
+        elif args["diet_goal"] == "lose":
             required_carbs = 0.45 * required_calories
 
         required_carbs = required_carbs / 4
@@ -91,7 +91,7 @@ class UserRegistration(Resource):
             required_protien = 2 * args["weight"]
         elif args["diet_goal"] == "maintain":
             required_protien = 1.3 * args["weight"]
-        elif args["diet_goal"] == "maintain":
+        elif args["diet_goal"] == "lose":
             required_protien = 1.6 * args["weight"]
 
         # Calculate required fat
@@ -100,7 +100,7 @@ class UserRegistration(Resource):
             required_fat = 0.35 * required_calories
         elif args["diet_goal"] == "maintain":
             required_fat = 0.25 * required_calories
-        elif args["diet_goal"] == "maintain":
+        elif args["diet_goal"] == "lose":
             required_fat = 0.20 * required_calories
 
         required_fat = required_fat / 4
