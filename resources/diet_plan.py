@@ -77,6 +77,7 @@ class DietPlan(Resource):
         diet_plan["total_fat"] = total_fat
         diet_plan["total_protien"] = total_protien
         diet_plan["total_carbs"] = total_carbs
+        diet_plan["meal_timing"] = meal_timing
 
         if todays_diet_plans:
             query = {
