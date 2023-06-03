@@ -84,7 +84,6 @@ class DietPlan(Resource):
                 "_id": ObjectId(user_id),
                 "generated_diet_plans": {"$elemMatch": {today: {"$exists": True}}},
             }
-            document = users.find_one(query)
             users.update_one(
                 query,
                 {"$push": {f"generated_diet_plans.$.{today}": diet_plan}},
