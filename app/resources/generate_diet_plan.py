@@ -1,4 +1,3 @@
-from sys import exception
 from pulp import LpMinimize, LpProblem, LpVariable, LpMaximize, lpSum, LpStatus
 from utils.token_required import token_required
 from flask_restful import Resource, request
