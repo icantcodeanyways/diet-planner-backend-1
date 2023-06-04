@@ -130,7 +130,7 @@ class GenerateDietPlan(Resource):
                     food_amounts[food_vars[i]] * food_protein[i]
                     for i in range(len(food_vars))
                 ]
-            ) >= ((user["required_protien"] / 3) - 50)
+            ) >= ((user["required_protien"] / 3) - 10)
             prob += lpSum(
                 [
                     food_amounts[food_vars[i]] * food_fat[i]
@@ -142,7 +142,7 @@ class GenerateDietPlan(Resource):
                     food_amounts[food_vars[i]] * food_fat[i]
                     for i in range(len(food_vars))
                 ]
-            ) >= ((user["required_fat"] / 3) - 50)
+            ) >= ((user["required_fat"] / 3) - 10)
             prob += lpSum(
                 [
                     food_amounts[food_vars[i]] * food_carbs[i]
@@ -154,16 +154,18 @@ class GenerateDietPlan(Resource):
                     food_amounts[food_vars[i]] * food_carbs[i]
                     for i in range(len(food_vars))
                 ]
-            ) >= ((user["required_carbs"] / 3) - 50)
+            ) >= ((user["required_carbs"] / 3) - 10)
+            print(prob)
 
             prob.solve()
             """ print(food_amounts) """
             """ print("Status:", LpStatus[prob.status]) """
             """ print(type(food_amounts)) """
 
-            for food in food_vars:
-                amount = food_amounts[food].varValue
-                print(food, amount)
+            """ for food in food_vars: """
+            """     amount = food_amounts[food].varValue """
+            """     print(food, amount) """
+            """"""
 
             # I hope that has worked..
 
