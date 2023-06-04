@@ -94,6 +94,8 @@ class UserRegistration(Resource):
         elif args["diet_goal"] == "lose":
             required_protien = 1.6 * args["weight"]
 
+        required_protien = required_protien / 4
+
         # Calculate required fat
         required_fat = 0
         if args["diet_goal"] == "gain":
