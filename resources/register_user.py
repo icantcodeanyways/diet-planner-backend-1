@@ -103,7 +103,7 @@ class UserRegistration(Resource):
         elif args["diet_goal"] == "lose":
             required_fat = 0.20 * required_calories
 
-        required_fat = required_fat / 4
+        required_fat = required_fat / 9
 
         # Insert user into database
         users.insert_one(
