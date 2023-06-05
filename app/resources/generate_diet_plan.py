@@ -155,6 +155,22 @@ class GenerateDietPlan(Resource):
                     for i in range(len(food_vars))
                 ]
             ) >= ((user["required_carbs"] / 3) - 50)
+            for var in food_amounts.values():
+                prob += var >= 50
+            for var in food_amounts.values():
+                prob += var <= 200
+
+            for i in range(len(food_vars)):
+                food_item = food_vars[i]
+                prob += food_amounts[food_item] * food_protein[i] <= 60
+                prob += food_amounts[food_item] * food_fat[i] <= 50
+                prob += food_amounts[food_item] * food_carbs[i] <= 200
+            for i in range(len(food_vars)):
+                food_item = food_vars[i]
+                prob += food_amounts[food_item] * food_protein[i] >= 5
+                prob += food_amounts[food_item] * food_fat[i] >= 1
+                prob += food_amounts[food_item] * food_carbs[i] >= 10
+
 
             prob.solve()
             """ print(food_amounts) """

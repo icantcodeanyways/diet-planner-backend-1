@@ -77,33 +77,34 @@ class UserRegistration(Resource):
         # Calculate required carbs
         required_carbs = 0
         if args["diet_goal"] == "gain":
-            required_carbs = 0.65 * required_calories
+            required_carbs = 0.50 * required_calories
         elif args["diet_goal"] == "maintain":
             required_carbs = 0.50 * required_calories
         elif args["diet_goal"] == "maintain":
-            required_carbs = 0.45 * required_calories
+            required_carbs = 0.50 * required_calories
 
         required_carbs = required_carbs / 4
 
         # Calculate required protien
         required_protien = 0
         if args["diet_goal"] == "gain":
-            required_protien = 2 * args["weight"]
+            required_protien = 0.30 * required_calories
         elif args["diet_goal"] == "maintain":
-            required_protien = 1.3 * args["weight"]
+            required_protien =  0.30 * required_calories
         elif args["diet_goal"] == "maintain":
-            required_protien = 1.6 * args["weight"]
+            required_protien =  0.30 * required_calories
+        required_protien =   required_protien / 4
 
         # Calculate required fat
         required_fat = 0
         if args["diet_goal"] == "gain":
-            required_fat = 0.35 * required_calories
+            required_fat = 0.20 * required_calories
         elif args["diet_goal"] == "maintain":
-            required_fat = 0.25 * required_calories
+            required_fat = 0.20 * required_calories
         elif args["diet_goal"] == "maintain":
             required_fat = 0.20 * required_calories
 
-        required_fat = required_fat / 4
+        required_fat = required_fat / 9
 
         # Insert user into database
         users.insert_one(
