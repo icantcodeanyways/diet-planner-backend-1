@@ -181,7 +181,7 @@ class GenerateDietPlan(Resource):
 
 
         # first chosen food item will be having higher quantities
-            prob += food_amounts[food_vars[0]] >= (food_amounts[food_vars[i]] for i in range(1, len(food_vars)))
+            # prob += food_amounts[food_vars[0]] >= (food_amounts[food_vars[i]] for i in range(1, len(food_vars)))
 
             prob.solve()
             """ print(food_amounts) """
