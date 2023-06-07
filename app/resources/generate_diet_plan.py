@@ -123,54 +123,65 @@ class GenerateDietPlan(Resource):
                     food_amounts[food_vars[i]] * food_protein[i]
                     for i in range(len(food_vars))
                 ]
-            ) <= (user["required_protien"] / 3)
+            ) <= ((user["required_protien"] / 3))
 
             prob += lpSum(
                 [
                     food_amounts[food_vars[i]] * food_protein[i]
                     for i in range(len(food_vars))
                 ]
-            ) >= ((user["required_protien"] / 3) - 50)
+            ) >= ((user["required_protien"] / 3)-20 )
             prob += lpSum(
                 [
                     food_amounts[food_vars[i]] * food_fat[i]
                     for i in range(len(food_vars))
                 ]
-            ) <= (user["required_fat"] / 3)
+            ) <= ((user["required_fat"] / 3))
             prob += lpSum(
                 [
                     food_amounts[food_vars[i]] * food_fat[i]
                     for i in range(len(food_vars))
                 ]
-            ) >= ((user["required_fat"] / 3) - 50)
+            ) >= ((user["required_fat"] / 3) -20)
             prob += lpSum(
                 [
                     food_amounts[food_vars[i]] * food_carbs[i]
                     for i in range(len(food_vars))
                 ]
-            ) <= (user["required_carbs"] / 3)
+            ) <= ((user["required_carbs"] / 3))
             prob += lpSum(
                 [
                     food_amounts[food_vars[i]] * food_carbs[i]
                     for i in range(len(food_vars))
                 ]
-            ) >= ((user["required_carbs"] / 3) - 50)
+            ) >= ((user["required_carbs"] / 3)-20)
+
+        #constraint for  minimum quantity of each food item
+         
             for var in food_amounts.values():
-                prob += var >= 50
+                prob += var >= 30
+        #constraint for  maximum quantity of each food item 
+
             for var in food_amounts.values():
-                prob += var <= 200
+                prob += var <= 150
+
+            #constraint for maximum nutrient quantity from each food item
+            for i in range(len(food_vars)):
+                food_item = food_vars[i]
+                prob += food_amounts[food_item] * food_protein[i] <= 80
+                prob += food_amounts[food_item] * food_fat[i] <= 40
+                prob += food_amounts[food_item] * food_carbs[i] <= 150
+            #constraint for minimum nutrient quantity from each food item
 
             for i in range(len(food_vars)):
                 food_item = food_vars[i]
-                prob += food_amounts[food_item] * food_protein[i] <= 60
-                prob += food_amounts[food_item] * food_fat[i] <= 50
-                prob += food_amounts[food_item] * food_carbs[i] <= 200
-            for i in range(len(food_vars)):
-                food_item = food_vars[i]
-                prob += food_amounts[food_item] * food_protein[i] >= 5
-                prob += food_amounts[food_item] * food_fat[i] >= 1
-                prob += food_amounts[food_item] * food_carbs[i] >= 10
+                prob += food_amounts[food_item] * food_protein[i] >= 7
+                prob += food_amounts[food_item] * food_fat[i] >= 0
+                prob += food_amounts[food_item] * food_carbs[i] >= 5
 
+
+        # first chosen food item will be having higher quantities
+            prob += food_amounts[food_vars[0]] >= (food_amounts[food_vars[i]] for i in range(1, len(food_vars)))
 
             prob.solve()
             """ print(food_amounts) """
@@ -180,6 +191,9 @@ class GenerateDietPlan(Resource):
             for food in food_vars:
                 amount = food_amounts[food].varValue
                 print(food, amount)
+
+            
+
 
             # I hope that has worked..
 
