@@ -77,13 +77,13 @@ class DietPlan(Resource):
         diet_plan["total_fat"] = total_fat
         diet_plan["total_protien"] = total_protien
         diet_plan["total_carbs"] = total_carbs
+        diet_plan["meal_timing"] = meal_timing
 
         if todays_diet_plans:
             query = {
                 "_id": ObjectId(user_id),
                 "generated_diet_plans": {"$elemMatch": {today: {"$exists": True}}},
             }
-            document = users.find_one(query)
             users.update_one(
                 query,
                 {"$push": {f"generated_diet_plans.$.{today}": diet_plan}},
