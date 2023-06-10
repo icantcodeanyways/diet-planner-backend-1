@@ -1,4 +1,5 @@
 from flask_restful import Resource
+from pulp import json
 from utils.token_required import token_required
 from db import users
 from bson.objectid import ObjectId
@@ -43,6 +44,7 @@ class DietPlan(Resource):
             return {"message": "User not found"}, 404
 
         diet_plan = request.get_json()
+        print(json.dumps(diet_plan))
         meals = request.get_json()["diet_plan"]
         meal_timing = request.get_json()["meal_timing"]
 
@@ -58,8 +60,8 @@ class DietPlan(Resource):
                 if len(todays_diet_plans) == 3:
                     return {"message": "Diet plans already exist"}, 409
 
-                for diet_plan in todays_diet_plans:
-                    if diet_plan["meal_timing"] == meal_timing:
+                for plan in todays_diet_plans:
+                    if plan["meal_timing"] == meal_timing:
                         return {"message": "Diet plan already exist"}, 409
 
         total_calories = 0
