@@ -57,7 +57,7 @@ class CustomFoodLog(Resource):
 
                 if (
                     len(response["parsed"]) == 0
-                    or selected_meals[i].strip().lower()
+                    or selected_meals[i]["food"].strip().lower()
                     != response["parsed"][0]["food"]["label"].strip().lower()
                 ):
                     hints = response["hints"]
@@ -68,7 +68,7 @@ class CustomFoodLog(Resource):
                     for hint in hints:
                         if (
                             hint["food"]["label"].strip().lower()
-                            == selected_meals[i].strip().lower()
+                            == selected_meals[i]["food"].strip().lower()
                         ):
                             response["parsed"] = [hint]
                             break

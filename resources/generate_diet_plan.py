@@ -211,5 +211,4 @@ class GenerateDietPlan(Resource):
             return diet_plan
 
         except KeyError as error:
-            print(f"Something fucked up here {error}")
             return {"message": "Invalid request"}, 400
