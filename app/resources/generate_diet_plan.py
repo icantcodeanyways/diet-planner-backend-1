@@ -130,7 +130,7 @@ class GenerateDietPlan(Resource):
                     food_amounts[food_vars[i]] * food_protein[i]
                     for i in range(len(food_vars))
                 ]
-            ) >= ((user["required_protien"] / 3)-20 )
+            ) >= ((user["required_protien"] / 3)-10 )
             prob += lpSum(
                 [
                     food_amounts[food_vars[i]] * food_fat[i]
@@ -154,12 +154,12 @@ class GenerateDietPlan(Resource):
                     food_amounts[food_vars[i]] * food_carbs[i]
                     for i in range(len(food_vars))
                 ]
-            ) >= ((user["required_carbs"] / 3)-20)
+            ) >= ((user["required_carbs"] / 3)-50)
 
         #constraint for  minimum quantity of each food item
          
             for var in food_amounts.values():
-                prob += var >= 30
+                prob += var >= 20
         #constraint for  maximum quantity of each food item 
 
             for var in food_amounts.values():
@@ -169,13 +169,13 @@ class GenerateDietPlan(Resource):
             for i in range(len(food_vars)):
                 food_item = food_vars[i]
                 prob += food_amounts[food_item] * food_protein[i] <= 80
-                prob += food_amounts[food_item] * food_fat[i] <= 40
-                prob += food_amounts[food_item] * food_carbs[i] <= 150
+                prob += food_amounts[food_item] * food_fat[i] <= 60
+                prob += food_amounts[food_item] * food_carbs[i] <= 170
             #constraint for minimum nutrient quantity from each food item
 
             for i in range(len(food_vars)):
                 food_item = food_vars[i]
-                prob += food_amounts[food_item] * food_protein[i] >= 7
+                prob += food_amounts[food_item] * food_protein[i] >= 3
                 prob += food_amounts[food_item] * food_fat[i] >= 0
                 prob += food_amounts[food_item] * food_carbs[i] >= 5
 
@@ -185,7 +185,7 @@ class GenerateDietPlan(Resource):
 
             prob.solve()
             """ print(food_amounts) """
-            """ print("Status:", LpStatus[prob.status]) """
+            print("Status:", LpStatus[prob.status])
             """ print(type(food_amounts)) """
 
             for food in food_vars:
