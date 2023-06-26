@@ -163,7 +163,7 @@ class GenerateDietPlan(Resource):
         #constraint for  maximum quantity of each food item 
 
             for var in food_amounts.values():
-                prob += var <= 150
+                prob += var <= 200
 
             #constraint for maximum nutrient quantity from each food item
             for i in range(len(food_vars)):
