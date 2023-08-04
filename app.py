@@ -11,6 +11,7 @@ from resources.diet_plan import DietPlan
 from resources.forgot_password import ForgotPassword
 from resources.reset_password import ResetPassword
 from resources.custom_food_log import CustomFoodLog
+from resources.custom_meal_log import CustomMeal
 
 app = Flask(__name__)
 
@@ -38,6 +39,7 @@ api.add_resource(
 )
 api.add_resource(ResetPassword, "/api/users/reset_password")
 api.add_resource(CustomFoodLog, "/api/users/<string:user_id>/custom_food_log")
+api.add_resource(CustomMeal, "/api/users/<string:user_id>/custom_meal_log")
 
 # Run the server
 if __name__ == "__main__":
