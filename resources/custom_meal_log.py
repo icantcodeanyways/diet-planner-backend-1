@@ -89,7 +89,7 @@ class CustomMeal(Resource):
                 "diet_plan": [
                     {
                         "item": meal_name,
-                        "quantity": quantity,
+                        "quantity": 1,
                         "image": "https://i.imgur.com/MEupGps.png",
                         "calories" : total_calories,
                         "protien" : total_protien,
